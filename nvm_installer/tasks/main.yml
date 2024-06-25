@@ -1,0 +1,31 @@
+---
+# tasks file for nvm_installer
+- name: Install nvm
+  shell: >
+    curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.39.1/install.sh | bash
+  args:
+    executable: /bin/bash
+  environment:
+    HOME: "{{ Home_path }}"
+    USER: "{{ user_name }}"
+    
+- name: Source NVM script and add to profile
+  shell: |
+    "echo 'export NVM_DIR="$HOME/.nvm"' >> {{ Home_path }}/.bashrc"
+    "echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> {{ Home_path }}/.bashrc"
+    "echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"' >> {{ Home_path }}/.bashrc"
+       
+  args:
+    executable: /bin/bash
+  ignore_errors: yes
+
+- name: Load NVM and install Node.js
+  shell: |
+       export NVM_DIR="$HOME/.nvm"
+       [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+       nvm install "{{ node_version }}" 
+  args:
+    executable: /bin/bash
+  environment:
+    HOME: "{{ Home_path }}"
+    USER: "{{ user_name }}"

@@ -1,0 +1,72 @@
+---
+# tasks file for apache_web
+- name: "Install apache2"
+  package:
+    name: apache2
+    state: present
+- name: Add Ondrej PHP PPA
+  apt_repository:
+    repo: ppa:ondrej/php
+    state: present
+- name: "Install php{{ php_version }}"
+  apt:
+    name: "php{{php_version}}"
+    state: present
+- name: "Install apache2-php{{ php_version }}"
+  apt:
+    name: "libapache2-mod-php{{php_version}}"
+    state: present
+- name: "Install php-cli"
+  package:
+    name: "php{{ php_version }}-cli"
+    state: present
+- name: "Install php-mcrypt"
+  package:
+    name: "php{{ php_version }}-mcrypt"
+    state: present
+- name: "Install php-gd"
+  package:
+    name: "php{{ php_version }}-gd"
+    state: present
+- name: "Install php-fpm"
+  package:
+    name: "php{{ php_version }}-fpm"
+    state: present
+- name: "Install php-common"
+  package:
+    name: "php{{ php_version }}-common"
+    state: present
+- name: "Install php-mbstring"
+  package:
+    name: "php{{ php_version }}-mbstring"
+    state: present
+- name: "Install php-xmlrpc"
+  package:
+    name: "php{{ php_version }}-xmlrpc"
+    state: present
+- name: "Install php-xml"
+  package:
+    name: "php{{ php_version }}-xml"
+    state: present
+- name: "Install php-mysql"
+  package:
+    name: "php{{ php_version }}-mysql"
+    state: present
+- name: "Install php zip"
+  package:
+    name: "php{{ php_version }}-zip"
+    state: present
+- name: "Install php-curl"
+  package:
+    name: "php{{ php_version }}-curl"
+    state: present
+- name: php fpm settings
+  replace:
+    path: "{{ php_fpm_conf_file_path }}"
+    regexp: "www-data"
+    replace: "{{ user_name }}"
+- name: reload php-fpm
+  service:
+    name: "php{{ php_version }}-fpm"
+    state: restarted
+

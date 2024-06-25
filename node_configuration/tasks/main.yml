@@ -1,0 +1,85 @@
+---
+# tasks file for node_configuration
+- name: create Node server Directory
+  file:
+    path: "{{ node_project_directory }}"
+    state: directory
+ #   owner: "{{ user_name }}"
+ #   group: "{{ user_name }}"
+#    mode: 0774
+
+- name: Clone a repo with separate git directory
+  ansible.builtin.git:
+    repo: "{{ repo_url }}"
+    dest: "{{ node_project_directory }}" 
+    update: yes
+  ignore_errors: true     
+
+- name: Change File permssion of project Directory
+  file:
+    path: "{{ node_project_directory }}"
+    owner: "{{ user_name }}"
+    group: "{{ user_name }}"
+    recurse: yes
+    mode: 0700
+
+- name: Change File permssion of project directory
+  file:
+    path: "{{ Home_path }}/.npm"
+    owner: "{{ user_name }}"
+    group: "{{ user_name }}"
+    recurse: yes
+    mode: 0700
+
+
+- name: Copy the env file to project directory
+  copy:
+    src: .env
+    dest: "{{ node_project_directory }}"
+    owner: "{{ user_name }}"
+    group: "{{ user_name }}"
+    mode: 0744
+
+
+- name: Run npm install
+  shell: |
+       source "{{ Home_path }}.bashrc"
+       export NVM_DIR="$HOME/.nvm"
+       [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+       cd "{{ node_project_directory }}" 
+       npm install
+       npm install pm2 -g
+  args:
+    executable: /bin/bash
+  environment:
+    HOME: "{{ Home_path }}"
+    USER: "{{ user_name }}"
+
+- name: Change File permssion of .pm2
+  file:
+    path: "{{ Home_path }}/.pm2"
+    owner: "{{ user_name }}"
+    group: "{{ user_name }}"
+    recurse: yes
+    mode: 0755
+
+- name: Ensure node_project directory exists and has correct permissions
+  file:
+    path: /home/wp_user/node_project
+    state: directory
+    owner: wp_user
+    group: wp_user
+    mode: '0755'
+
+- name: Start node server 
+  shell: |
+       export NVM_DIR="$HOME/.nvm"
+       [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+       cd "{{ node_project_directory }}"
+       #pm2 stop server
+       pm2 start server
+  args:
+    executable: /bin/bash
+  environment:
+    HOME: "{{ Home_path }}"
+    USER: "{{ user_name }}"

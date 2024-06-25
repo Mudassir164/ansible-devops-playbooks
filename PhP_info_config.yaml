@@ -1,0 +1,28 @@
+---
+- name: Test Project Directory
+  hosts: all
+  vars:
+    user_name: wp_user
+    user_pass: 123456789
+    php_version: 7.4
+    php_fpm_conf_file_path: "/etc/php/{{ php_version }}/fpm/pool.d/www.conf"
+    db_user: wp-user
+    db_pass: S3rv3r@321
+    db_name: wp_db
+    project_directory_name: test
+    project_directory: "/home/{{ user_name }}/{{ project_directory_name }}"
+    domain_name: example.com
+#node var
+    Home_path: "/home/{{ user_name }}"
+    project_dir_name: node_project
+    node_project_directory: "{{ Home_path}}/{{ project_dir_name}}"
+  become: true
+  roles:
+#    - basic_config
+ #   - apache_and_php_setup
+#    - apache_configuration
+ #   - project_directory_setup
+#    - mysql_setup
+#    - wordpress_setup
+   # - nvm_installer
+    - node_configuration

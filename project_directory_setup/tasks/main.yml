@@ -1,0 +1,23 @@
+---
+# tasks file for project_directory_setup
+- name: Create a project directory setup
+  file:
+    path: "{{ project_directory }}"
+    owner: "{{ user_name }}"
+    group: "{{ user_name }}"
+    state: directory
+    mode: '0700'
+
+- name: Create a info.php file
+  file:
+    path: "{{ project_directory }}/info.php"
+    owner: "{{ user_name }}"
+    group: "{{ user_name }}"
+    state: touch
+    mode: '0600'
+- name: Add a line to a file if the file does not exist, without passing regexp
+  lineinfile:
+    path: "{{ project_directory }}/info.php"
+    line: <?php phpinfo( ); ?>
+    create: yes
+
