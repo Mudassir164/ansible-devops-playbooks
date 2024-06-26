@@ -1,0 +1,28 @@
+---
+- name: Test Project Directory
+  hosts: all
+  vars:
+    user_name: wp_user1
+    user_pass: 123456789
+#node var
+    Home_path: "/home/{{ user_name }}"
+    project_dir_name: node_project
+    node_project_directory: "{{ Home_path}}/{{ project_dir_name}}"
+    node_version: 8.16.0
+    repo_url: https://github.com/kinsta/hello-world-nodejs.git
+ # become: true
+  roles:
+    - role: basic_config
+      become: true
+#    - nvm_installer
+#    - node_configuration
+    - role: ansible-role-nvm
+      ansibe_user: "{{ user_name }}"
+      nodejs_version: "{{ node_version}}"
+      nvm_profile: "/home/wp_user1/.bashrc"
+      nvm_dir: "/home/wp_user1/.nvm"
+      nvm_commands:
+       - "nvm exec default npm install"
+      become: true            # THIS WILL CHANGE THE LOGIN CONTEXT TO USE THE USER BELOW
+     # become_user: "{{ user_name }}"   # THIS INSTALLS NVM IN THE CONTEXT OF THE EC2-USER/DEFAULT USER.
+      ignore_errors: True
