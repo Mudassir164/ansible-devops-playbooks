@@ -2,7 +2,7 @@
 - name: MongoDB installer
   hosts: all
   vars:
-    mongodb_version: 7.0
+    mongodb_version: 6.0
   tasks:
 
   - name: get contents of package.txt
@@ -55,5 +55,8 @@
 
   - name: Start service mongodb, if not started
     service:
-      name: mongod
       state: started
+      daemon_reload: true
+      name: mongod
+      enabled: yes
+    become: true
