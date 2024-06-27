@@ -1,0 +1,15 @@
+---
+- name: Test j2 template
+  hosts: all
+  become: True
+  vars:
+    web_port: 8080
+    php_version: 7.4
+    project_path: /home/wp_user/test
+    domain_name: example1.com
+  tasks:
+    - name: Change Default conf file
+      template:
+        src: apache_conf.j2
+        dest: /etc/apache2/sites-available/000-default.conf
+        

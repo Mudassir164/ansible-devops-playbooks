@@ -1,0 +1,59 @@
+---
+- name: MongoDB installer
+  hosts: all
+  vars:
+    mongodb_version: 7.0
+  tasks:
+
+  - name: get contents of package.txt
+    command: "lsb_release -c"
+    register: os_result
+
+  - ansible.builtin.set_fact:
+      os_version_code: "{{ os_result.stdout.split()[1] }}"
+
+  - name: Debug value
+    debug:
+      msg: "{{ os_version_code }}"
+
+  - name: Add Example GPG key
+    ansible.builtin.get_url:
+      url: "https://www.mongodb.org/static/pgp/server-{{ mongodb_version }}.asc"
+      dest: "/usr/share/keyrings/mongodb-server-{{ mongodb_version }}.asc"
+      mode: '0644'
+      force: true
+    become: True
+
+  - name: Check that the /usr/share/keyrings/mongodb-server-{{ mongodb_version }}.gpg exists
+    stat:
+      path: /usr/share/keyrings/mongodb-server-{{ mongodb_version }}.gpg
+    register: stat_result
+
+  - name: convert asc into gpg
+    command:   "gpg -o /usr/share/keyrings/mongodb-server-{{ mongodb_version }}.gpg --dearmor /usr/share/keyrings/mongodb-server-{{ mongodb_version }}.asc " 
+    when: not stat_result.stat.exists
+    become: true
+ 
+  - name: Add Example repo
+    lineinfile: 
+      line: 'deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-{{ mongodb_version }}.gpg ] https://repo.mongodb.org/apt/ubuntu {{ os_version_code}}/mongodb-org/{{ mongodb_version }} multiverse'
+      dest: /etc/apt/sources.list.d/mongodb-org-{{ mongodb_version }}.list
+      state: present
+      create: yes
+    become: true
+
+  - name: Update all packages to their latest version
+    apt:
+      update_cache: yes
+    become: True
+
+  - name: install Pacakages
+    apt:
+      name: mongodb-org
+      state: present
+    become: True
+
+  - name: Start service mongodb, if not started
+    service:
+      name: mongod
+      state: started
