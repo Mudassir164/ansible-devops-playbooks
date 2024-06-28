@@ -1,0 +1,70 @@
+---
+- name: Jenkins installer
+  hosts: all
+  vars:
+    jenkins_version: 6.0
+  tasks:
+
+  - name: get os release code
+    command: "lsb_release -c"
+    register: os_result
+
+  - ansible.builtin.set_fact:
+      os_version_code: "{{ os_result.stdout.split()[1] }}"
+
+  - name: Debug value
+    debug:
+      msg: "{{ os_version_code }}"
+
+  - name: Add Example GPG key
+    ansible.builtin.get_url:
+      url: "https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key"
+      dest: "/usr/share/keyrings/jenkins-keyring.asc"
+      mode: '0644'
+      force: true
+    become: True
+
+  - name: Add Example repo
+    lineinfile: 
+      line: 'deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/'
+      dest: /etc/apt/sources.list.d/jenkins.list
+      state: present
+      create: yes
+    become: true
+
+  - name: Update all packages to their latest version
+    apt:
+      update_cache: yes
+    become: True
+
+  - name: install Pacakages
+    become: True
+    apt:
+      name: "{{ item }}"
+      state: present
+    loop:
+      - fontconfig
+      - openjdk-17-jre
+      - jenkins
+
+  - name: Start service Jenkins, if not started
+    service:
+      state: started
+      daemon_reload: true
+      name: jenkins
+      enabled: yes
+    become: true
+
+  - name: get os release code
+    command: "cat /var/lib/jenkins/secrets/initialAdminPassword"
+    register: jenkins_initial_password
+    become: True
+
+  - ansible.builtin.set_fact:
+      jenkins_password: "{{ jenkins_initial_password.stdout }}"
+    become: True
+
+  - name: Debug value
+    debug:
+      msg: "{{ jenkins_password }}" 
+    become: True    

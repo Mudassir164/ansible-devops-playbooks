@@ -1,0 +1,37 @@
+---
+- name: AWS CLI installer
+  hosts: all
+  vars:
+    aws_version: 13
+  tasks:
+  - name: Creates directory
+    file:
+      path: /etc/apt/keyrings
+      state: directory
+      mode: 0755
+    become: True
+
+  - name: Install unzip command
+    apt:
+      name: unzip
+      state: present
+    become: yes
+ 
+  - name: Download Aws CLI zip file
+    ansible.builtin.get_url:
+      url: https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip
+      dest: "/tmp/awscliv2.zip"
+    become: True
+
+  - name: Extract all ZIP files
+    ansible.builtin.unarchive:
+      src: /tmp/awscliv2.zip
+      dest: /tmp/
+      remote_src: yes
+    become: true
+
+  - name: Run a script 
+    shell: | 
+         cd /tmp
+         ./aws/install
+    become: True
