@@ -1,0 +1,59 @@
+---
+- name: Possgress SQL installer
+  hosts: all
+  vars:
+    psql_version: 13
+  tasks:
+
+  - name: get os release code
+    command: "lsb_release -c"
+    register: os_result
+
+  - ansible.builtin.set_fact:
+      os_version_code: "{{ os_result.stdout.split()[1] }}"
+
+  - name: Debug value
+    debug:
+      msg: "{{ os_version_code }}"
+
+  - name: Creates directory
+    file:
+      path: /usr/share/postgresql-common/pgdg
+      state: directory
+    become: True
+ 
+  - name: Add Example GPG key
+    ansible.builtin.get_url:
+      url: "https://www.postgresql.org/media/keys/ACCC4CF8.asc"
+      dest: "/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc"
+      mode: '0644'
+      force: true
+    become: True
+
+ 
+  - name: Add Postgresql repository
+    lineinfile: 
+      line: "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt {{os_version_code }}-pgdg main"
+      dest: /etc/apt/sources.list.d/pgdg.list
+      state: present
+      create: yes
+    become: true
+
+  - name: Update all packages to their latest version
+    apt:
+      update_cache: yes
+    become: True
+
+  - name: Install Postgresql
+    apt:
+      name: "postgresql-{{psql_version}}"
+      state: present
+    become: True
+
+  - name: Start Postgresql
+    service:
+      state: started
+      daemon_reload: true
+      name: postgresql
+      enabled: yes
+    become: true
