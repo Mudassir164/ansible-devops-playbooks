@@ -1,0 +1,12 @@
+<VirtualHost *:{{web_port}}>
+
+    ServerAdmin admin@{{ domain_name}}
+    ServerName {{ domain_name}}
+    ServerAlias www.{{ domain_name}}
+    DocumentRoot {{ project_directory }}
+<FilesMatch \.php$>
+        SetHandler "proxy:unix:/run/php/php{{ php_version }}-fpm.sock|fcgi://localhost/"
+    </FilesMatch>
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>

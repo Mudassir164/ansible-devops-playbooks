@@ -4,11 +4,13 @@
   file:
     path: "{{ project_directory }}"
     state: directory
+
 - name: Download and Extract WordPress
   unarchive:
     src: https://wordpress.org/latest.tar.gz
     dest: "/tmp"
     remote_src: yes
+
 - name: Copy wordpress file to project directory
   copy:
     src: "/tmp/wordpress/."
@@ -20,6 +22,7 @@
     src: "{{ project_directory }}/wp-config-sample.php"
     dest: "{{ project_directory }}/wp-config.php"
     remote_src: yes
+
 - name: Update WordPress config file
   lineinfile:
     path: "{{ project_directory }}/wp-config.php"
@@ -29,3 +32,11 @@
     - {'regexp': "define\\( 'DB_NAME', '(.)+' \\);", 'line': "define( 'DB_NAME', '{{ db_name }}' );"}
     - {'regexp': "define\\( 'DB_USER', '(.)+' \\);", 'line': "define( 'DB_USER', '{{ db_user }}' );"}
     - {'regexp': "define\\( 'DB_PASSWORD', '(.)+' \\);", 'line': "define( 'DB_PASSWORD', '{{ db_pass }}' );"}
+
+- name: Change the Permision
+  file:
+    path: "{{ project_directory }}"
+    owner: "{{ user_name }}"
+    group: "{{ user_name }}"
+    recurse: True
+

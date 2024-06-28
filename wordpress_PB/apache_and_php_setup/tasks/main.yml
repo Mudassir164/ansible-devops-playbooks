@@ -1,7 +1,7 @@
 ---
 # tasks file for apache_web
 - name: "Install apache2"
-  package:
+  apt:
     name: apache2
     state: present
 - name: Add Ondrej PHP PPA
