@@ -1,0 +1,55 @@
+---
+- name: Elastic Search  installer
+  hosts: all
+  vars:
+    ES_version: 6.0
+  tasks:
+
+  - name: get os release code
+    command: "lsb_release -c"
+    register: os_result
+
+  - ansible.builtin.set_fact:
+      os_version_code: "{{ os_result.stdout.split()[1] }}"
+
+  - name: Debug value
+    debug:
+      msg: "{{ os_version_code }}"
+
+  - name: Add Example GPG key
+    ansible.builtin.get_url:
+      url: "https://artifacts.elastic.co/GPG-KEY-elasticsearch"
+      dest: "/usr/share/keyrings/elasticsearch.asc"
+      mode: '0644'
+      force: true
+    become: True
+
+  - name: Add elasticsearch repo
+    lineinfile: 
+      line: 'deb [signed-by=/usr/share/keyrings/elasticsearch.asc] https://artifacts.elastic.co/packages/8.x/apt stable main'
+      dest: /etc/apt/sources.list.d/elastic-8.x.list
+      state: present
+      create: yes
+    become: true
+
+  - name: Update all packages to their latest version
+    apt:
+      update_cache: yes
+    become: True
+
+  - name: install elasticsearch Pacakages
+    become: True
+    apt:
+      name: "{{ item }}"
+      state: present
+    loop:
+      - elasticsearch
+
+  - name: Start service elasticsearch, if not started
+    service:
+      state: started
+      daemon_reload: true
+      name: elasticsearch
+      enabled: yes
+    become: true
+
