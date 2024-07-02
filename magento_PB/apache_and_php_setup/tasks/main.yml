@@ -1,0 +1,64 @@
+---
+# tasks file for apache_web
+- name: "Install apache2"
+  apt:
+    name: apache2
+    state: present
+
+- name: Add Ondrej PHP PPA
+  apt_repository:
+    repo: ppa:ondrej/php
+    state: present
+
+
+- name: "Install php{{ php_version }}"
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - php{{ php_version }}
+    - libapache2-mod-php{{ php_version }}
+    - php{{ php_version }}-common
+    - php{{ php_version }}-gmp
+    - php{{ php_version }}-curl
+    - php{{ php_version }}-soap
+    - php{{ php_version }}-bcmath
+    - php{{ php_version }}-intl
+    - php{{ php_version }}-mbstring
+    - php{{ php_version }}-xmlrpc
+    - php{{ php_version }}-mysql
+    - php{{ php_version }}-gd
+    - php{{ php_version }}-xml
+    - php{{ php_version }}-cli
+    - php{{ php_version }}-zip
+    - php{{ php_version }}-fpm
+
+
+- name: php fpm settings
+  replace:
+    path: "{{ php_fpm_conf_file_path }}"
+    regexp: "www-data"
+    replace: "{{ user_name }}"
+
+
+
+- name: Update WordPress config file
+  lineinfile:
+    path: "/etc/php/{{ php_version }}/apache2/php.ini"
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  loop:
+    - {'regexp': "memory_limit = .*", 'line': "memory_limit = 512M"}
+    - {'regexp': "upload_max_filesize = .*", 'line': "upload_max_filesize = 128M"}
+    - {'regexp': "short_open_tag = .*", 'line': "short_open_tag = On"}
+    - {'regexp': "file_uploads = .*", 'line': "file_uploads = On"}
+    - {'regexp': "allow_url_fopen = .*", 'line': "allow_url_fopen = On"}
+    - {'regexp': "max_execution_time = .*", 'line': "max_execution_time = 3600"}
+
+
+
+- name: reload php-fpm
+  service:
+    name: "php{{ php_version }}-fpm"
+    state: restarted
+

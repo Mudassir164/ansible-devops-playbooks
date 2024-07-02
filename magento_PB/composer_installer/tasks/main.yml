@@ -1,0 +1,75 @@
+---
+# tasks file for composer_installer
+- name: Download Composer installer
+  get_url:
+    url: https://getcomposer.org/installer
+    dest: /tmp/composer-setup.php
+
+- name: execute composer install script
+  command: php /tmp/composer-setup.php
+  args:
+    chdir: /tmp
+
+- name: Copy files from composer.phar
+  copy: 
+    remote_src: True 
+    src: /tmp/composer.phar 
+    dest: /usr/local/bin/composer
+    mode: +x
+
+- name: Set Magento Access Keys for Composer
+  command: composer global config http-basic.repo.magento.com "{{ magento_username }}" "{{ magento_password }}"
+  become_user: "{{ user_name }}"
+  become: no
+
+
+- name: Set Files Permissions to g+w
+  shell: find var generated vendor pub/static pub/media app/etc -type f -exec chmod g+w {} +
+  args:
+    chdir: "{{ project_directory }}"
+
+- name: file and direcotry permssion 
+  file:
+    path: "{{ project_directory }}"
+    owner: "{{ user_name }}"
+    group: "{{ user_name }}"
+    recurse: yes
+    mode: 0775
+
+- name: Configure magento main configuration
+  shell: |
+        bin/magento setup:install \
+         --base-url=http://"{{ domain_name }}" \
+         --db-host=localhost \
+         --db-name="{{ db_name }}" \
+         --db-user="{{ db_user }}" \
+         --db-password={{ db_pass }} \
+         --admin-firstname=Admin \
+         --admin-lastname=User \
+         --admin-email=admin@"{{ domain_name }}" \
+         --admin-user=admin \
+         --admin-password=admin123 \
+         --language=en_US \
+         --currency=USD \
+         --timezone=America/Chicago \
+         --use-rewrites=1
+  args:
+    chdir: "{{ project_directory }}"
+
+
+- name: file and direcotry permssion
+  file:
+    path: "{{ project_directory }}"
+    owner: "{{ user_name }}"
+    group: "{{ user_name }}"
+    recurse: yes
+    mode: 0775
+
+
+- name: Disable Two factor authentication , clear cache and di compile
+  shell: |
+        bin/magento module:disable Magento_AdminAdobeImsTwoFactorAuth Magento_TwoFactorAuth
+        bin/magento cache:flush
+        bin/magento setup:di:compile
+  args:
+    chdir: "{{ project_directory }}"

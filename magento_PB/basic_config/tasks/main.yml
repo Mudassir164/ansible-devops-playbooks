@@ -1,0 +1,15 @@
+---
+# tasks file for basic_config
+- name: Update all packages to their latest version
+  apt:
+    update_cache: yes
+
+- name: Add the user '{{user_name}}'
+  ansible.builtin.user:
+    name: '{{user_name}}'
+    comment: Add John Doe
+    shell: /bin/bash
+    update_password: always
+    password: "{{ user_pass | password_hash('sha512')}}"
+    create_home: yes
+  become: true

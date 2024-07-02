@@ -1,0 +1,51 @@
+---
+
+- name: Change Default conf file
+  template:
+    src: apache_vhost.j2
+    dest: "/etc/apache2/sites-available/{{ domain_name }}.conf"
+
+- name: Update apache apache2.conf file
+  lineinfile:
+    path: "/etc/apache2/apache2.conf"
+    regexp: "<Directory /var/www/>"
+    line: "<Directory {{ project_directory }}>"
+
+- name: Update apache2  envvars file
+  lineinfile:
+    path: "/etc/apache2/envvars"
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  loop:
+    - {'regexp': "export APACHE_RUN_USER=www-data", 'line': "export APACHE_RUN_USER={{ user_name }}"}
+    - {'regexp': "export APACHE_RUN_GROUP=www-data", 'line': "export APACHE_RUN_GROUP={{ user_name }}"}
+
+- name: Enable the Apache2 module proxy_fcgi
+  apache2_module:
+    state: present
+    name: proxy_fcgi
+
+- name: Enable the Apache2 module setenvif
+  apache2_module:
+    state: present
+    name: setenvif
+
+- name: Enable the Apache2 module setenvif
+  apache2_module:
+    state: present
+    name: rewrite
+
+
+- name: Enabling conf
+  command: "a2enconf php{{ php_version }}-fpm" 
+
+- name: Enable virtual host
+  command: a2ensite {{ domain_name }}.conf
+
+- name: Disable default site
+  command: a2dissite 000-default.conf
+
+- name:
+  service:
+    name: apache2
+    state: restarted
