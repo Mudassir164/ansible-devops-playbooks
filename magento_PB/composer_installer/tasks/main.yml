@@ -1,5 +1,4 @@
 ---
-# tasks file for composer_installer
 - name: Download Composer installer
   get_url:
     url: https://getcomposer.org/installer
@@ -17,9 +16,32 @@
     dest: /usr/local/bin/composer
     mode: +x
 
+- name: -----------------------File and Directory Permission------------------------------------------
+  file:
+    path: "/home/{{ user_name }}"
+    owner: "{{ user_name }}"
+    group: "{{ user_name }}"
+    recurse: yes
+    mode: 0777
+
+
 - name: Set Magento Access Keys for Composer
-  command: composer global config http-basic.repo.magento.com "{{ magento_username }}" "{{ magento_password }}"
-  become_user: "{{ user_name }}"
+  command: composer global config  http-basic.repo.magento.com "{{ magento_username }}" "{{ magento_password }}"
+  remote_user: "{{ user_name }}"
+  become: no
+
+- name: Copy files from composer.phar
+  copy:
+    remote_src: True
+    src: /home/ubuntu/.config/composer
+    dest: /home/magento_user/.config
+    owner: "{{ user_name }}"
+    group: "{{ user_name }}"
+
+
+
+- name: Install magento on directory
+  command: composer create-project --repository=https://repo.magento.com/ magento/project-community-edition "{{ project_directory}}"
   become: no
 
 
@@ -27,6 +49,16 @@
   shell: find var generated vendor pub/static pub/media app/etc -type f -exec chmod g+w {} +
   args:
     chdir: "{{ project_directory }}"
+
+- name: -----------------------File and Directory Permission------------------------------------------
+  file:
+    path: "/home/{{ user_name }}"
+    owner: "{{ user_name }}"
+    group: "{{ user_name }}"
+    recurse: yes
+    mode: 0700
+
+
 
 - name: file and direcotry permssion 
   file:
@@ -57,13 +89,13 @@
     chdir: "{{ project_directory }}"
 
 
-- name: file and direcotry permssion
+- name: change file and direcotry permssion
   file:
     path: "{{ project_directory }}"
     owner: "{{ user_name }}"
     group: "{{ user_name }}"
     recurse: yes
-    mode: 0775
+    mode: 0700
 
 
 - name: Disable Two factor authentication , clear cache and di compile
