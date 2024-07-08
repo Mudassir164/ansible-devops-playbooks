@@ -9,7 +9,7 @@
   apt_repository:
     repo: ppa:ondrej/php
     state: present
-
+  ignore_errors: yes
 
 - name: "Install php{{ php_version }}"
   apt:

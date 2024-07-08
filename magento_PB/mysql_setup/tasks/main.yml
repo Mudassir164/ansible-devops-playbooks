@@ -16,25 +16,36 @@
     state: started
     enabled: yes
 
-- name: Creating MySQL user (medium_post)
+- name: Update Password of MySQL Root user   
   mysql_user:
-    name: "{{ db_user }}"
-    password: "{{ db_pass }}"
-    priv: '*.*:ALL'
-    host: 'localhost'
-    state: present
+    name: "root"
+    password: "S3rv3r@321"
+  ignore_errors: yes
 
-- name: Creating medium_db
+- name: Creating mysql db
   mysql_db:
     name: "{{ db_name }}"
     state: present
+    login_user: root
+    login_password: "S3rv3r@321"
 
-- name: Enable remote login to MySQL
-  lineinfile:
-    path: /etc/mysql/mysql.conf.d/mysqld.cnf
-    regexp: '^bind-address'
-    line: 'bind-address = 0.0.0.0'
-    backup: yes
-  notify:
-    - Restart mysql
+
+- name: Creating MySQL user 
+  mysql_user:
+    name: "{{ db_user }}"
+    password: "{{ db_pass }}"
+    priv: '{{ db_name }}.*:ALL'
+    host: 'localhost'
+    state: present
+    login_user: root
+    login_password: "S3rv3r@321"
+
+#- name: Enable remote login to MySQL
+#  lineinfile:
+#    path: /etc/mysql/mysql.conf.d/mysqld.cnf
+#    regexp: '^bind-address'
+#    line: 'bind-address = 0.0.0.0'
+#    backup: yes
+#  notify:
+#    - Restart mysql
 

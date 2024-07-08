@@ -11,12 +11,13 @@
   debug:
     msg: "{{ os_version_code }}"
 
-- name: Add Example GPG key
+- name: Add GPG key
   ansible.builtin.get_url:
     url: "https://artifacts.elastic.co/GPG-KEY-elasticsearch"
     dest: "/usr/share/keyrings/elasticsearch.asc"
     mode: '0644'
-    force: true
+    #force: true
+#    remote_user: yes
   become: True
 
 - name: Add elasticsearch repo

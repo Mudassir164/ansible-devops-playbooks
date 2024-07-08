@@ -16,33 +16,27 @@
     dest: /usr/local/bin/composer
     mode: +x
 
-- name: -----------------------File and Directory Permission------------------------------------------
-  file:
-    path: "/home/{{ user_name }}"
-    owner: "{{ user_name }}"
-    group: "{{ user_name }}"
-    recurse: yes
-    mode: 0777
+#- name: -----------------------File and Directory Permission------------------------------------------
+ # file:
+ #   path: "/home/{{ user_name }}"
+ #   owner: "{{ user_name }}"
+ #   group: "{{ user_name }}"
+ #   recurse: yes
+ #   mode: 0777
 
 
 - name: Set Magento Access Keys for Composer
   command: composer global config  http-basic.repo.magento.com "{{ magento_username }}" "{{ magento_password }}"
-  remote_user: "{{ user_name }}"
-  become: no
-
-- name: Copy files from composer.phar
-  copy:
-    remote_src: True
-    src: /home/ubuntu/.config/composer
-    dest: /home/magento_user/.config
-    owner: "{{ user_name }}"
-    group: "{{ user_name }}"
-
+  become: yes
+  environment:
+    COMPOSER_ALLOW_SUPERUSER: 1
 
 
 - name: Install magento on directory
   command: composer create-project --repository=https://repo.magento.com/ magento/project-community-edition "{{ project_directory}}"
-  become: no
+  become: yes
+  environment:
+    COMPOSER_ALLOW_SUPERUSER: 1
 
 
 - name: Set Files Permissions to g+w
