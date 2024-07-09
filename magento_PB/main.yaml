@@ -9,7 +9,7 @@
     db_user: magento-db-user
     db_pass: S3rv3r@321
     db_name: magento_db
-    project_directory_name: test3
+    project_directory_name: magento_test
     project_directory: "/home/{{ user_name }}/{{ project_directory_name }}"
     domain_name: example.com
     web_port: 80
@@ -19,9 +19,9 @@
   become: true
   roles:
 #    - basic_config
-#    - apache_and_php_setup
-#    - apache_configuration
-#    - project_directory_setup
-#    - mysql_setup
-#    - elastic_search
+    - apache_and_php_setup
+    - apache_configuration
+    - project_directory_setup
+    - mysql_setup
+    - elastic_search
     - composer_installer

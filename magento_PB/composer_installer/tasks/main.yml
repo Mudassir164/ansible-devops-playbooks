@@ -38,29 +38,45 @@
   environment:
     COMPOSER_ALLOW_SUPERUSER: 1
 
-
-- name: Set Files Permissions to g+w
-  shell: find var generated vendor pub/static pub/media app/etc -type f -exec chmod g+w {} +
-  args:
-    chdir: "{{ project_directory }}"
-
-- name: -----------------------File and Directory Permission------------------------------------------
-  file:
-    path: "/home/{{ user_name }}"
-    owner: "{{ user_name }}"
-    group: "{{ user_name }}"
-    recurse: yes
-    mode: 0700
-
-
-
-- name: file and direcotry permssion 
+- name: ----Change File owner---------------
   file:
     path: "{{ project_directory }}"
     owner: "{{ user_name }}"
     group: "{{ user_name }}"
     recurse: yes
-    mode: 0775
+    #mode: 0700
+
+- name: -----Make Executeable file of magento----------------
+  file:
+    path: "{{ project_directory }}/bin/magento"
+    mode: u+x
+
+
+
+- name: Set Files Permissions to g+w
+  shell: |
+        find var generated vendor pub/static pub/media app/etc -type f -exec chmod g+w {} +
+        find var generated vendor pub/static pub/media app/etc -type d -exec chmod g+ws {} +
+  args:
+    chdir: "{{ project_directory }}"
+
+#- name: -----------------------File and Directory Permission------------------------------------------
+#  file:
+#    path: "/home/{{ user_name }}"
+#    owner: "{{ user_name }}"
+#    group: "{{ user_name }}"
+#    recurse: yes
+#    mode: 0700
+
+
+
+#- name: file and direcotry permssion 
+#  file:
+#    path: "{{ project_directory }}"
+#    owner: "{{ user_name }}"
+#    group: "{{ user_name }}"
+#    recurse: yes
+#    mode: 0775
 
 - name: Configure magento main configuration
   shell: |
@@ -83,13 +99,13 @@
     chdir: "{{ project_directory }}"
 
 
-- name: change file and direcotry permssion
-  file:
-    path: "{{ project_directory }}"
-    owner: "{{ user_name }}"
-    group: "{{ user_name }}"
-    recurse: yes
-    mode: 0700
+#- name: change file and direcotry permssion
+#  file:
+#    path: "{{ project_directory }}"
+#    owner: "{{ user_name }}"
+#    group: "{{ user_name }}"
+#    recurse: yes
+#    mode: 0700
 
 
 - name: Disable Two factor authentication , clear cache and di compile
