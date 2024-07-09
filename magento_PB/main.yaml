@@ -2,15 +2,26 @@
 - name: Install Magento full setup
   hosts: all
   vars:
+  ##############################
+    #create User name
     user_name: magento_user
     user_pass: S3rv3r@321
+  ##############################
+    #Define PHP Version
     php_version: 8.2
     php_fpm_conf_file_path: "/etc/php/{{ php_version }}/fpm/pool.d/www.conf"
+   ############################# 
+    #My SQL Setup
+    my_sql_root_password: S3rv3r@321
     db_user: magento-db-user
     db_pass: S3rv3r@321
     db_name: magento_db
+   ##############################
+    #Project Directory Setup
     project_directory_name: magento_test
     project_directory: "/home/{{ user_name }}/{{ project_directory_name }}"
+   ###############################
+    #define Domain Name
     domain_name: example.com
     web_port: 80
     magento_username: "82290c48120e0cce10551e6388daf6c3"
@@ -18,7 +29,7 @@
     magento_version: "2.4.6"
   become: true
   roles:
-#    - basic_config
+    - basic_config
     - apache_and_php_setup
     - apache_configuration
     - project_directory_setup
