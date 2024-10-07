@@ -19,7 +19,7 @@
 - name: Update Password of MySQL Root user   
   mysql_user:
     name: "root"
-    password: "S3rv3r@321"
+    password: "{{ my_sql_root_password }}"
   ignore_errors: yes
 
 - name: Creating mysql db
