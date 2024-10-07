@@ -6,6 +6,6 @@
     owner: "{{ user_name }}"
     group: "{{ user_name }}"
     state: directory
-    mode: '0700'
+    mode: '0755'
 
 

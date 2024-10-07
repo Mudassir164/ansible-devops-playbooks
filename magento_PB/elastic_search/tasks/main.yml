@@ -22,8 +22,8 @@
 
 - name: Add elasticsearch repo
   lineinfile: 
-    line: 'deb [signed-by=/usr/share/keyrings/elasticsearch.asc] https://artifacts.elastic.co/packages/8.x/apt stable main'
-    dest: /etc/apt/sources.list.d/elastic-8.x.list
+    line: 'deb [signed-by=/usr/share/keyrings/elasticsearch.asc] https://artifacts.elastic.co/packages/{{ elastic_search_version }}/apt stable main'
+    dest: "/etc/apt/sources.list.d/elastic-{{ elastic_search_version }}.list"
     state: present
     create: yes
   become: true

@@ -19,7 +19,7 @@
 - name: Update Password of MySQL Root user   
   mysql_user:
     name: "root"
-    password: "S3rv3r@321"
+    password: "{{ mysql_root_password }}"
   ignore_errors: yes
 
 - name: Creating mysql db
@@ -27,7 +27,7 @@
     name: "{{ db_name }}"
     state: present
     login_user: root
-    login_password: "S3rv3r@321"
+    login_password: "{{ mysql_root_password }}"
 
 
 - name: Creating MySQL user 
@@ -38,7 +38,7 @@
     host: 'localhost'
     state: present
     login_user: root
-    login_password: "S3rv3r@321"
+    login_password: "{{ mysql_root_password }}"
 
 #- name: Enable remote login to MySQL
 #  lineinfile:

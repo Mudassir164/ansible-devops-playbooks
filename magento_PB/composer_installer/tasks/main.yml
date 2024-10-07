@@ -33,11 +33,11 @@
 
 
 - name: Install magento on directory
-  command: composer create-project --repository=https://repo.magento.com/ magento/project-community-edition "{{ project_directory}}"
+  command: composer create-project --repository=https://repo.magento.com/ magento/project-community-edition="{{magento_version}}" "{{ project_directory}}"
   become: yes
   environment:
     COMPOSER_ALLOW_SUPERUSER: 1
-
+  ignore_errors: yes
 - name: ----Change File owner---------------
   file:
     path: "{{ project_directory }}"
@@ -85,7 +85,7 @@
          --db-host=localhost \
          --db-name="{{ db_name }}" \
          --db-user="{{ db_user }}" \
-         --db-password={{ db_pass }} \
+         --db-password='{{ db_pass }}' \
          --admin-firstname=Admin \
          --admin-lastname=User \
          --admin-email=admin@"{{ domain_name }}" \
@@ -97,8 +97,6 @@
          --use-rewrites=1
   args:
     chdir: "{{ project_directory }}"
-
-
 #- name: change file and direcotry permssion
 #  file:
 #    path: "{{ project_directory }}"
@@ -115,3 +113,5 @@
         bin/magento setup:di:compile
   args:
     chdir: "{{ project_directory }}"
+  environment:
+    COMPOSER_ALLOW_SUPERUSER: 1

@@ -2,26 +2,28 @@
 - name: Install Magento full setup
   hosts: all
   vars:
-    user_name: magento_user
-    user_pass: S3rv3r@321
+    user_name: health-care
+    user_pass: 3lcl@s$ic0h12
     php_version: 8.2
     php_fpm_conf_file_path: "/etc/php/{{ php_version }}/fpm/pool.d/www.conf"
-    db_user: magento-db-user
-    db_pass: S3rv3r@321
-    db_name: magento_db
-    project_directory_name: magento_test
+    mysql_root_password: 3lcl@s$ic0ClubR00t
+    db_user: video_streaming
+    db_pass: 3lcl@s$ic0Club
+    db_name: video_streaming_user
+    project_directory_name: video_stream
     project_directory: "/home/{{ user_name }}/{{ project_directory_name }}"
-    domain_name: example.com
+    domain_name:  stream.cubestagearea.xyz
     web_port: 80
+    elastic_search_version: 7.x
     magento_username: "82290c48120e0cce10551e6388daf6c3"
     magento_password: "5486e0a6ef9c479078bc85cded1ddde4"
     magento_version: "2.4.6"
   become: true
   roles:
-#    - basic_config
-    - apache_and_php_setup
-    - apache_configuration
-    - project_directory_setup
-    - mysql_setup
-    - elastic_search
-    - composer_installer
+    - basic_config
+#    - apache_and_php_setup
+#    - apache_configuration
+#    - project_directory_setup
+#    - mysql_setup
+#    - elastic_search
+#    - composer_installer
