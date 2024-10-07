@@ -3,13 +3,13 @@
   hosts: all
   vars:
     user_name: wp_user
-    user_pass: S3rv3r@321klMer
+    user_pass: 
     php_version: 8.2
     php_fpm_conf_file_path: "/etc/php/{{ php_version }}/fpm/pool.d/www.conf"
     db_user: wp-user
-    db_pass: S3rv3r@32145ghj
+    db_pass: S3
     db_name: wp_db
-    mysql_root_password: S3rv3r@321GHti
+    mysql_root_password: S3
     project_directory_name: wordpress
     project_directory: "/home/{{ user_name }}/{{ project_directory_name }}"
     domain_name: example.com

@@ -2,14 +2,14 @@
 - name: Install Magento full setup
   hosts: all
   vars:
-    user_name: health-care
-    user_pass: 3lcl@s$ic0h12
+    user_name: 
+    user_pass: 
     php_version: 8.2
     php_fpm_conf_file_path: "/etc/php/{{ php_version }}/fpm/pool.d/www.conf"
-    mysql_root_password: 3lcl@s$ic0ClubR00t
-    db_user: video_streaming
-    db_pass: 3lcl@s$ic0Club
-    db_name: video_streaming_user
+    mysql_root_password: 
+    db_user: 
+    db_pass: 
+    db_name: 
     project_directory_name: video_stream
     project_directory: "/home/{{ user_name }}/{{ project_directory_name }}"
     domain_name:  stream.cubestagearea.xyz
@@ -21,9 +21,9 @@
   become: true
   roles:
     - basic_config
-#    - apache_and_php_setup
-#    - apache_configuration
-#    - project_directory_setup
-#    - mysql_setup
-#    - elastic_search
-#    - composer_installer
+    - apache_and_php_setup
+    - apache_configuration
+    - project_directory_setup
+    - mysql_setup
+    - elastic_search
+    - composer_installer
