@@ -2,9 +2,9 @@
 - name: Test Project Directory
   hosts: all
   vars:
-    user_name: 
-    user_pass: 5
-    php_version: 8.3
+    user_name: test-user
+    user_pass: ygy3hJtDnX56MeT+
+    php_version: 8.2
     php_fpm_conf_file_path: "/etc/php/{{ php_version }}/fpm/pool.d/www.conf"
     db_user: wp-user
     db_pass: S350v+t37t3v1wcWMp0g
@@ -17,8 +17,8 @@
   become: true
   roles:
     - basic_config
-    #- apache_and_php_setup
-    #- apache_configuration
-    #- project_directory_setup
-    #- mysql_setup
-    #- wordpress_setup
+#    - apache_and_php_setup
+ #   - apache_configuration
+  #  - project_directory_setup
+   # - mysql_setup
+   # - wordpress_setup
