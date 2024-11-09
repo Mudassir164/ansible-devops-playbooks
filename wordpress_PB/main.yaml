@@ -3,13 +3,13 @@
   hosts: all
   vars:
     user_name: test-user
-    user_pass: ygy3hJtDnX56MeT+
+    user_pass: 
     php_version: 8.2
     php_fpm_conf_file_path: "/etc/php/{{ php_version }}/fpm/pool.d/www.conf"
-    db_user: wp-user
-    db_pass: S350v+t37t3v1wcWMp0g
-    db_name: wp_db
-    mysql_root_password: S350v+t37t3v1wc
+    db_user: 
+    db_pass: 
+    db_name: 
+    mysql_root_password: 
     project_directory_name: wordpress
     project_directory: "/home/{{ user_name }}/{{ project_directory_name }}"
     domain_name: markhorwear.com
