@@ -1,0 +1,25 @@
+---
+- name: Install Amazon CloudWatch Agent
+  hosts: all
+  become: yes
+  tasks:
+    - name: Update the package list
+      ansible.builtin.apt:
+        update_cache: yes
+
+    - name: Download Amazon CloudWatch Agent
+      ansible.builtin.get_url:
+        url: "https://amazoncloudwatch-agent.s3.amazonaws.com/ubuntu/arm64/latest/amazon-cloudwatch-agent.deb"
+        dest: "/tmp/amazon-cloudwatch-agent.deb"
+
+    - name: Install Amazon CloudWatch Agent using dpkg
+      ansible.builtin.apt:
+        deb: "/tmp/amazon-cloudwatch-agent.deb"
+        install: yes
+        state: present
+        force: yes  # Equivalent to -E flag in dpkg
+
+    - name: Ensure CloudWatch agent service is running
+      ansible.builtin.service:
+        name: amazon-cloudwatch-agent
+        state: started
